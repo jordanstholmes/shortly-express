@@ -1,32 +1,95 @@
 const models = require('../models');
 const Promise = require('bluebird');
 
+var createNewSession = (req, res, next) => {
+
+  models.Sessions.create()
+    .then((sqlRes) => {
+      return models.Sessions.get({id: sqlRes.insertId});
+    })
+    .then((newSesh) => {
+      req.session = newSesh;
+      res.cookie('shortlyid', newSesh.hash);
+      // next();
+    })
+    .then(() => {
+      if (req.body.username) {
+        return models.Users.get(req.body.username);
+      } else {
+        next();
+      }
+    })
+    .then((user) => {
+      req.session.user = user;
+      return models.Sessions.update({id: req.session.id}, {userId: user.id});
+    })
+    .then(() => next())
+    .catch((err) => {
+      if (!(err instanceof TypeError)) {
+        console.log(err);
+      }  
+    });
+};
+
+var reinstantiateSession = (req, res, next) => {
+  // models.Sessions.get({hash: req.cookies.shortlyid}).then()
+  req.session = {hash: req.cookies.shortlyid};
+  next();
+};
+
+/*
+if cookie
+  if session associated with cookie has id
+    add that id/name to session object
+  else 
+    just add the session object to req
+
+does the req have a session obj && that session obj has a username and id?
+if not, no access
+if yes, acccess
+*/
+
 module.exports.createSession = (req, res, next) => {
-  if (Object.keys(req.cookies).length > 0) {
-    // if (req.cookies['shortlyid']) {
-      
-    // }
+
+  if (req.cookies.shortlyid) {
+    reinstantiateSession(req, res, next);
   } else {
-    models.Sessions.create()
-      .then((sqlRes) => {
-        // models.Sessions.update({id: sqlRes.insertId}, {userId: 10});
-        // req.session = session;
-        // console.log(sqlRes);
-        return models.Sessions.get({id: sqlRes.insertId});
-      })
-      .then((newSesh) => {
-        // console.log(newSesh);
-        req.session = newSesh;
-        //console.log(req.session.hash);
-      })
-      .then(() => next())
-      .catch((err) => console.log(err));
+    createNewSession(req, res, next);
   }
 };
+
+
+/*
+When does a session object get created?
+  - request with cookies comes in
+      * look up user data related to that session and creates the session object
+      * add to session object relevant user information
+  - request with no cookies comes in because new account was created
+  - request with no cookies comes in because user logged in
+
+What is the purpose of adding a session object to the request object?
+  - verify session should check that there is a session object on the req (with hash)
+  - if the session has a user id on it, then 
+  
+
+What information about a do we want to keep in the session object? 
+  - Username? (that's already in the req...)
+  - id? 
+
+What do we do with a session object?
+  - verify the session
+  - 
+
+*/
 
 /************************************************************/
 // Add additional authentication middleware functions below
 /************************************************************/
+
+var addCookie = function(req, res, next) {
+  
+};
+
 
 // that accesses the 
 // parsed cookies on the request, 
