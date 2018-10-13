@@ -14,8 +14,7 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-
-
+app.use(Auth.createSession);
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -75,9 +74,9 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-app.get('/signup', (req, res, next) => {
-  res.render('signup');
-});
+// app.get('/signup', (req, res, next) => {
+//   res.render('signup');
+// });
 
 app.post('/signup', (req, res, next) => {
   models.Users.create({ username: req.body.username, password: req.body.password })
