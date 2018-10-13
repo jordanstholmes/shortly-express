@@ -58,8 +58,6 @@ describe('', function() {
       });
     });
 
-    console.log('AM I EVEN RUNNING!?');
-
     afterEach(function() { server.close(); });
   });
 
