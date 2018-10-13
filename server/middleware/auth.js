@@ -1,6 +1,19 @@
 const models = require('../models');
 const Promise = require('bluebird');
 
+/*
+TEST
+add BillZito into users with id 1
+(get id 1)
+
+FIRST CALL, request (no cookie, no nothing), empty response
+  -> expecting req to have .session.hash
+  update the session in db with the userId where for the user the test just inserted
+    
+
+*/
+
+
 var createNewSession = (req, res, next) => {
 
   models.Sessions.create()
@@ -10,11 +23,10 @@ var createNewSession = (req, res, next) => {
     .then((newSesh) => {
       req.session = newSesh;
       res.cookie('shortlyid', newSesh.hash);
-      // next();
     })
     .then(() => {
       if (req.body.username) {
-        return models.Users.get(req.body.username);
+        return models.Users.get({username: req.body.username});
       } else {
         next();
       }
@@ -32,9 +44,16 @@ var createNewSession = (req, res, next) => {
 };
 
 var reinstantiateSession = (req, res, next) => {
-  // models.Sessions.get({hash: req.cookies.shortlyid}).then()
-  req.session = {hash: req.cookies.shortlyid};
-  next();
+  
+  models.Sessions.get({hash: req.cookies.shortlyid})
+    .then(session => {
+      if (session) {
+        req.session = session;
+        next();
+      } else {
+        createNewSession(req, res, next);
+      }
+    }); 
 };
 
 /*
@@ -50,7 +69,7 @@ if yes, acccess
 */
 
 module.exports.createSession = (req, res, next) => {
-
+  
   if (req.cookies.shortlyid) {
     reinstantiateSession(req, res, next);
   } else {

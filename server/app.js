@@ -91,7 +91,7 @@ app.post('/signup', (req, res, next) => {
 
 app.post('/login', (req, res, next) => {
   // attempted pw from req, salt and pw from user table
-  models.Users.get(req.body.username)
+  models.Users.get({username: req.body.username})
     .then((user) => models.Users.compare(req.body.password, user.password, user.salt))
     .then((pwCorrect) => {
       if (pwCorrect) {
