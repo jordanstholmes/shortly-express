@@ -74,9 +74,9 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-// app.get('/signup', (req, res, next) => {
-//   res.render('signup');
-// });
+app.get('/signup', (req, res, next) => {
+  res.render('signup');
+});
 
 app.post('/signup', (req, res, next) => {
   models.Users.create({ username: req.body.username, password: req.body.password })
@@ -103,6 +103,8 @@ app.post('/login', (req, res, next) => {
       res.redirect('/login');
     });
 });
+
+
 
 // compare(attempted, password, salt) {
 //     return utils.compareHash(attempted, password, salt);

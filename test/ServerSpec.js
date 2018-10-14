@@ -122,8 +122,8 @@ describe('', function() {
       });
     });
   });
-
-  xdescribe('Account Creation:', function() {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  describe('Account Creation:', function() {
 
     it('signup creates a new user record', function(done) {
       var options = {
@@ -147,7 +147,7 @@ describe('', function() {
       });
     });
 
-    it('does not store the user\'s original text password', function(done) {
+    xit('does not store the user\'s original text password', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -170,7 +170,7 @@ describe('', function() {
       });
     });
 
-    it('redirects to signup if the user already exists', function(done) {
+    xit('redirects to signup if the user already exists', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -190,7 +190,7 @@ describe('', function() {
       });
     });
 
-    it('redirects to index after user is created', function(done) {
+    xit('redirects to index after user is created', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -325,7 +325,7 @@ describe('', function() {
     });
   });
 
-  describe('Express Middleware', function() {
+  xdescribe('Express Middleware', function() {
     var cookieParser = require('../server/middleware/cookieParser.js');
     var createSession = require('../server/middleware/auth.js').createSession;
 
@@ -480,7 +480,7 @@ describe('', function() {
     });
   });
 
-  describe('Sessions and cookies', function() {
+  xdescribe('Sessions and cookies', function() {
     var requestWithSession;
     var cookieJar;
 
@@ -686,7 +686,7 @@ describe('', function() {
       });
     });
 
-    describe('With previously saved urls:', function() {
+    xdescribe('With previously saved urls:', function() {
 
       var link;
 

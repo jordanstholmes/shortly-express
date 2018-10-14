@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const cookieParser = require('./cookieParser.js');
 
 var createNewSession = (req, res, next) => {
-
+  
   models.Sessions.create()
     .then((sqlRes) => {
       return models.Sessions.get({id: sqlRes.insertId});
@@ -20,10 +20,16 @@ var createNewSession = (req, res, next) => {
       }
     })
     .then((user) => {
+      /*
+      NOTE: it appears that if a user is signing up, and we run auth on the request,
+      the Users.get below times out because cannot get a property of undefined (user.id)
+      */
       req.session.user = user;
       return models.Sessions.update({id: req.session.id}, {userId: user.id});
     })
-    .then(() => next())
+    .then((sessionUpdateInfo) => {
+      next();
+    })
     .catch((err) => {
       if (!(err instanceof TypeError)) {
         console.log(err);
